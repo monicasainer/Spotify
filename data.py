@@ -1,6 +1,11 @@
 import os
 import pandas as pd
 
-class get_data:
-    path= os.environ.get("PATH")
-    df=pd.read_json(f'{path}StreamingHistory0')
+class Data_export:
+    def __init__(self):
+        return None
+
+    def get_historical_data():
+        path_to_raw_data= os.environ.get("PATH_TO_RAW_DATA")
+        df=pd.read_json(f'{path_to_raw_data}/StreamingHistory0.json')
+        return df
