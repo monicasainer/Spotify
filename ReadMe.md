@@ -13,7 +13,7 @@ When you use the Download Your Data automated tool, you will receive several fil
 
 Data type:
 
-### Playlist
+### 🎹 Playlist
 
 > A summary of the playlists created or saved and songs saved, including:
 
@@ -27,7 +27,7 @@ Data type:
 8. Number of followers the playlist has.
 9. Streaming history (audio, video and podcasts)
 
-### Streaming history (audio, video and podcasts)
+### 🏛 Streaming history (audio, video and podcasts)
 
 > A list of items (such as songs, videos, and podcasts) that the user has listened to or watched in the past year, including:
 
@@ -36,7 +36,7 @@ Data type:
 3. Names of items the user has listened to or watched (eg titles of music tracks or names of videos).
 4. "msPlayed" – represents how many milliseconds the track was listened to.
 
-### Your library
+### 📚 Your library
 
 > A summary (at the time of request) of the content stored in Your Library (songs, episodes, shows, artists and albums), including:
 
@@ -46,7 +46,7 @@ Data type:
 4. The object's Uniform Resource Identifiers (URIs).
 5. Search history
 
-### Search history
+### 🔎 Search history
 
 > A list of all searches performed, including:
 
@@ -57,7 +57,7 @@ Data type:
 5. See Voice Input below for voice commands.
 6. Follow
 
-### Follow
+### 👯‍♂️ Follow
 
 >This includes (if available) at the time of request:
 
@@ -66,7 +66,7 @@ Data type:
 3. The number of other accounts this account has blocked.
 4. Payments
 
-### Payments
+### 💰 Payments
 
 > This includes payment method information (if available):
 
@@ -77,7 +77,7 @@ Data type:
 5. **Payment country** – the country where the card was issued, e.g. Great Britain or Sweden.
 6. **Postcode** – the postcode to which the card is registered.
 
-### User data
+### 👨‍💻 User data
 
 > This includes (if applicable):
 
