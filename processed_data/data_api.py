@@ -51,21 +51,21 @@ def search_for_episodes(token,episode_name):
     else: return episode_name
 
 
-def search_for_tracks(token,track):
+def search_for_tracks(token,track_name):
     """
     Returns an array with the artist_name and the id of the track
     """
     url = "https://api.spotify.com/v1/search"
     headers = get_auth_token(token)
-    query = f"?q={track}&type=track&market=ES"
+    query = f"?q={track_name}&type=track&market=ES"
 
     query_url = url + query
     result = get(query_url,headers=headers)
-
-    json_result=json.loads(result.content)
-    artist_name=json_result['tracks']['items'][0]['artists'][0]['name']
-    id=json_result['tracks']['items'][0]['id']
-    return (artist_name,id)
+    if result.status_code == 200:
+        json_result=json.loads(result.content)
+    # artist_name=json_result['tracks']['items'][0]['artists'][0]['name']
+        track_id=json_result['tracks']['items'][0]['id']
+        return track_id
 
 
 def get_features_by_song(token,track_id):
@@ -80,4 +80,4 @@ def get_features_by_song(token,track_id):
     headers = get_auth_token(token)
     result = get(url, headers=headers)
     json_result = json.loads(result.content)
-    return json_result.keys()
+    return json_result
