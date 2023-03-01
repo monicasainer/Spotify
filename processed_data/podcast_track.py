@@ -15,6 +15,7 @@ podcast_vs_tracks_classification = client.open("Spotify_database").worksheet('cl
 podcast_vs_tracks_minutes = client.open("Spotify_database").worksheet('minutes_per_month')
 minutes_month_wth_type = client.open("Spotify_database").worksheet('minutes_month_wth_type')
 minutes_week = client.open("Spotify_database").worksheet('minutes_week')
+music_week = client.open("Spotify_database").worksheet('music_week')
 
 
 def aggregate_count_by_type():
@@ -72,3 +73,13 @@ def minutes_per_week():
     minutes_week.update([music_per_week.columns.values.tolist()] + music_per_week.values.tolist())
 
     return music_per_week
+
+def music_per_week():
+    historical_data = historical_data_with_types()
+    historical_data["week"] = historical_data["endTime"].dt.isocalendar().week
+    music_per_week_df = historical_data.groupby(["week"], as_index=False)\
+    .agg(totalTime=("msPlayed", "sum"), nrArtists=("artistName", "nunique"))
+    music_per_week_df["week"] = music_per_week_df["week"].astype(str)
+    music_week.update([music_per_week_df.columns.values.tolist()] + music_per_week_df.values.tolist())
+
+    return music_per_week_df
