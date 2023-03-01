@@ -12,7 +12,8 @@ path_to_raw_data= os.environ.get("PATH_TO_RAW_DATA")
 creds = ServiceAccountCredentials.from_json_keyfile_name(f"{path_to_raw_data}/creds.json",scope)
 client = gspread.authorize(creds)
 historical_data_database = client.open("Spotify_database").sheet1
-
+historical_data_dates_types_types = client.open("Spotify_database").worksheet('historical_dates_types')
+historical_data_dates_dates = client.open("Spotify_database").worksheet('historical_dates')
 
 
 
@@ -36,3 +37,25 @@ def historical_data_with_types(save=None):
         historical_data_database.update([historical_data.columns.values.tolist()] + historical_data.values.tolist())
     historical_data['endTime'] = pd.to_datetime(historical_data['endTime'],format='%Y-%m-%d %H:%M') # Turning objects into timestamp.
     return historical_data
+
+
+def historical_data_dates_types():
+    """
+    returns a dataframe with the following columns:
+    ['date', 'typeObject', 'totalTime']
+    """
+    historical_data_dates_types = historical_data_with_types() # Getting the historical information from json
+    historical_data_dates_types['date'] = historical_data_dates_types['endTime'].dt.date
+    historical_data_dates_types_types.update([historical_data_dates_types.columns.values.tolist()] + historical_data_dates_types.values.tolist())
+    return historical_data_dates_types
+
+def historical_data_dates():
+    """
+    returns a dataframe with the following columns:
+    ['endTime', 'artistName', 'trackName', 'msPlayed', 'typeObject', 'minutesPlayed','date]
+    """
+    historical_data_dates_df = historical_data_with_types() # Getting the historical information from json
+    historical_data_dates_df['date'] = historical_data_dates_df['endTime'].dt.date
+    music_per_day = historical_data_dates_df.groupby(['date'],as_index=False).agg(totalTime=("minutesPlayed","sum"))
+    historical_data_dates_dates.update([music_per_day.columns.values.tolist()] + music_per_day.values.tolist())
+    return  music_per_day
