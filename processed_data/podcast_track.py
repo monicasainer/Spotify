@@ -78,7 +78,7 @@ def music_per_week():
     historical_data = historical_data_with_types()
     historical_data["week"] = historical_data["endTime"].dt.isocalendar().week
     music_per_week_df = historical_data.groupby(["week"], as_index=False)\
-    .agg(totalTime=("msPlayed", "sum"), nrArtists=("artistName", "nunique"))
+    .agg(totalTime=("minutesPlayed", "sum"), nrArtists=("artistName", "nunique"))
     music_per_week_df["week"] = music_per_week_df["week"].astype(str)
     music_week.update([music_per_week_df.columns.values.tolist()] + music_per_week_df.values.tolist())
 
