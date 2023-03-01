@@ -75,6 +75,12 @@ def minutes_per_week():
     return music_per_week
 
 def music_per_week():
+     """
+    returns a dataframe with the total minutes played by month and audio type
+    during last year. The columns are:
+    ['week','totalTime','nrArtists']
+    """
+
     historical_data = historical_data_with_types()
     historical_data["week"] = historical_data["endTime"].dt.isocalendar().week
     music_per_week_df = historical_data.groupby(["week"], as_index=False)\
