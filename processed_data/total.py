@@ -13,6 +13,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name(f"{path_to_raw_data}/cr
 client = gspread.authorize(creds)
 historical_data_database = client.open("Spotify_database").sheet1
 historical_data_dates_types_types = client.open("Spotify_database").worksheet('historical_dates_types')
+historical_data_dates_types_grouped = client.open("Spotify_database").worksheet('historical_dates_types_grouped')
 historical_data_dates_dates = client.open("Spotify_database").worksheet('historical_dates')
 
 
@@ -44,10 +45,14 @@ def historical_data_dates_types():
     returns a dataframe with the following columns:
     ['date', 'typeObject', 'totalTime']
     """
-    historical_data_dates_types = historical_data_with_types() # Getting the historical information from json
-    historical_data_dates_types['date'] = historical_data_dates_types['endTime'].dt.date
-    historical_data_dates_types_types.update([historical_data_dates_types.columns.values.tolist()] + historical_data_dates_types.values.tolist())
-    return historical_data_dates_types
+    historical_data_dates_types_df = historical_data_with_types() # Getting the historical information from json
+    historical_data_dates_types_df['date'] = historical_data_dates_types_df['endTime'].dt.date
+    historical_data_dates_types_tracks_df = historical_data_dates_types_df.groupby(["typeObject","date"],as_index=False).agg(listeningTracks=("minutesPlayed", "sum"))
+    historical_data_dates_types_types.update([historical_data_dates_types_df.columns.values.tolist()] + historical_data_dates_types_df.values.tolist())
+    historical_data_dates_types_grouped.update([historical_data_dates_types_tracks_df.columns.values.tolist()]+historical_data_dates_types_tracks_df.values.tolist())
+
+
+    return historical_data_dates_types_df
 
 def historical_data_dates():
     """
@@ -59,3 +64,6 @@ def historical_data_dates():
     music_per_day = historical_data_dates_df.groupby(['date'],as_index=False).agg(totalTime=("minutesPlayed","sum"))
     historical_data_dates_dates.update([music_per_day.columns.values.tolist()] + music_per_day.values.tolist())
     return  music_per_day
+
+returns = historical_data_dates_types()
+print(returns)
