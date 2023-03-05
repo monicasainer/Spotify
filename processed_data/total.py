@@ -15,7 +15,8 @@ historical_data_database = client.open("Spotify_database").sheet1
 historical_data_dates_types_types = client.open("Spotify_database").worksheet('historical_dates_types')
 historical_data_dates_types_grouped = client.open("Spotify_database").worksheet('historical_dates_types_grouped')
 historical_data_dates_dates = client.open("Spotify_database").worksheet('historical_dates')
-
+historical_data_weekday_types_dataset = client.open("Spotify_database").worksheet('historical_weekday_types')
+historical_data_weekday_dataset = client.open("Spotify_database").worksheet('historical_weekday')
 
 
 def historical_data_with_types(save=None):
@@ -47,13 +48,14 @@ def historical_data_dates_types():
     """
     historical_data_dates_types_df = historical_data_with_types() # Getting the historical information from json
     historical_data_dates_types_df['date'] = historical_data_dates_types_df['endTime'].dt.date
-    historical_data_dates_types_tracks_df = historical_data_dates_types_df.groupby(["typeObject","date"],as_index=False).agg(listeningTracks=("minutesPlayed", "sum"))
-    historical_data_dates_types_types.update([historical_data_dates_types_df.columns.values.tolist()] + historical_data_dates_types_df.values.tolist())
+    historical_data_dates_types_df['weekday'] = historical_data_dates_types_df['endTime'].dt.weekday
+    historical_data_dates_types_df.drop(columns=['endTime','artistName','trackName','msPlayed'],inplace=True)
+    historical_data_dates_types_df_df = historical_data_dates_types_df.groupby(['date','weekday'],as_index=False).agg(minutesPlayed=("minutesPlayed", "sum"))
+    historical_data_dates_types_tracks_df = historical_data_dates_types_df.groupby(["typeObject","date","weekday"],as_index=False).agg(listeningTracks=("minutesPlayed", "sum"))
+    historical_data_dates_types_types.update([historical_data_dates_types_df_df.columns.values.tolist()] + historical_data_dates_types_df_df.values.tolist())
     historical_data_dates_types_grouped.update([historical_data_dates_types_tracks_df.columns.values.tolist()]+historical_data_dates_types_tracks_df.values.tolist())
 
-
     return historical_data_dates_types_df
-
 def historical_data_dates():
     """
     returns a dataframe with the following columns:
@@ -65,5 +67,28 @@ def historical_data_dates():
     historical_data_dates_dates.update([music_per_day.columns.values.tolist()] + music_per_day.values.tolist())
     return  music_per_day
 
-returns = historical_data_dates_types()
-print(returns)
+def historical_data_weekday_types():
+    """
+    returns a dataframe with the following columns:
+    ['weekday', 'typeObject', 'totalTime']
+    """
+    historical_data_weekday_types_df = historical_data_with_types() # Getting the historical information from json
+    historical_data_weekday_types_df['weekday'] = historical_data_weekday_types_df['endTime'].dt.weekday
+    historical_data_weekday_types_df = historical_data_weekday_types_df.groupby(["weekday","typeObject"],as_index=False).agg(listeningTracks=("minutesPlayed", "sum"))
+    historical_data_weekday_types_dataset.update([historical_data_weekday_types_df.columns.values.tolist()] + historical_data_weekday_types_df.values.tolist())
+
+    return historical_data_weekday_types_df
+
+def historical_data_weekday():
+    """
+    returns a dataframe with the following columns:
+    ['weekday', , 'totalTime']
+    """
+    historical_data_weekday_df = historical_data_with_types() # Getting the historical information from json
+    historical_data_weekday_df['weekday'] = historical_data_weekday_df['endTime'].dt.weekday
+    historical_data_weekday_df = historical_data_weekday_df.groupby(["weekday"],as_index=False).agg(listeningTracks=("minutesPlayed", "sum"))
+    historical_data_weekday_dataset.update([historical_data_weekday_df.columns.values.tolist()] + historical_data_weekday_df.values.tolist())
+    return historical_data_weekday_df
+
+
+historical_data_dates_types_df = historical_data_dates_types()
